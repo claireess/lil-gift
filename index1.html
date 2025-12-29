@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Special Delivery</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0b1c2d, #4a0f18);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #f5f5f5;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 520px;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .cat { position: absolute; font-size: 24px; opacity: 0.8; }
+    .cat.tl { top: 10px; left: 14px; }
+    .cat.tr { top: 10px; right: 14px; }
+    .cat.bl { bottom: 10px; left: 14px; }
+    .cat.br { bottom: 10px; right: 14px; }
+
+    #text {
+      min-height: 160px;
+      white-space: pre-wrap;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    input, button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      display: none;
+    }
+
+    button {
+      background: #7a1c2b;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover { background: #9e2639; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <div class="cat tl">🐱</div>
+  <div class="cat tr">🐈</div>
+  <div class="cat bl">🐾</div>
+  <div class="cat br">🐱</div>
+
+  <div id="text"></div>
+  <input id="input" placeholder="type here..." />
+  <button id="btn">Send</button>
+</div>
+
+<script>
+  const textEl = document.getElementById("text");
+  const input = document.getElementById("input");
+  const btn = document.getElementById("btn");
+
+  let step = 0;
+  let name = "";
+
+  const validNames = ["ania", "rania", "انيا", "аня", "رانيا", "рания"];
+
+  function showInput(show) {
+    input.style.display = show ? "block" : "none";
+    btn.style.display = show ? "block" : "none";
+  }
+
+  function typeText(text, callback) {
+    showInput(false);
+    textEl.textContent = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      textEl.textContent += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (callback) callback();
+      }
+    }, 35);
+  }
+
+  function dots(times = 5, speed = 1000, callback) {
+    let count = 0;
+    const interval = setInterval(() => {
+      textEl.textContent += ".";
+      count++;
+      if (count >= times) {
+        clearInterval(interval);
+        if (callback) callback();
+      }
+    }, speed);
+  }
+
+  function next() {
+    const value = input.value.toLowerCase().trim();
+    input.value = "";
+
+    if (step === 0) {
+      typeText("I'm on a mission, actually. I need to deliver a package to a very special person. Would you be so kind to help me? (yes / no)", () => showInput(true));
+      step++;
+      return;
+    }
+
+    if (step === 1) {
+      if (value !== "yes") {
+        typeText("Oh... I see. I understand. I'll find someone else.");
+        return;
+      }
+      typeText("Okay! Excellent! I knew I could count on you. Before I continue... may I ask your name?", () => showInput(true));
+      step++;
+      return;
+    }
+
+    if (step === 2) {
+      if (!validNames.includes(value)) {
+        typeText("I see... Could you please deliver this package to Ania?");
+        return;
+      }
+      name = value.charAt(0).toUpperCase() + value.slice(1);
+      typeText("So... since that's really you, " + name + "... That makes things a lot easier. It seems like you're the one I've been looking for. Here, I have a package for you. Please, take it. (yes / no)", () => showInput(true));
+      step++;
+      return;
+    }
+
+    if (step === 3) {
+      if (value !== "yes") {
+        typeText("You decided not to open the package.");
+        return;
+      }
+      typeText("You opened the package! It's a letter. Do you want to open it? (yes / no)", () => showInput(true));
+      step++;
+      return;
+    }
+
+    if (step === 4) {
+      typeText(
+        "Okay, so... In the letter it says:\n\nDear " + name + ",\n\nI hope this letter finds you well. It took me a pretty long time until I finally had an idea of something nice to do for you. I wanted it to be meaningful and speacial for you. After all, you deserve absolutely the best, everything of good in this whole world. You are an amazing girl and I couldn't be any more grateful to have in my life. Thank you for being so kind and gentle to me all the time. You're an angel that just appeared in my life out of nowhere. I plan to keep you in my life, if you'll have me. Well, I don't really know what to say, but I hope you know just how happy you make me and how much I appreciate you. I love you, " + name + ". So, you said you'd give me something on 31/12/2025, correct? (but i'm giving this to you earlier haha) So, I decided to give you this. It wouldn't be nice if you gave me something and I didn't give you anything in return, right? Anyways... It's so interesting how people can simply appear in your life and change it so quickly, isn't it? Hahah, I still can't believe on how fast everything happened, but it's not all bad, actually. I already like you so much. So...\n\nMy dear Ania",
+        () => {
+          dots(5, 1000, () => {
+            typeText("Would you be my girlfriend? (officially) (yes / no)", () => showInput(true));
+          });
+        }
+      );
+      step++;
+      return;
+    }
+
+    if (step === 5) {
+      if (value === "yes") {
+        typeText("Oh, my god! OH MY GODDD! I am so happy! You just made me the happiest girl alive!\n\nI love you, my sweet girl.\n\nWith love,\nYour very new girlfriend, Clarice. <3");
+      } else {
+        typeText("Oh... I see. I understand, but thank you for being that sweet girl for me nonetheless.");
+      }
+      showInput(false);
+    }
+  }
+
+  btn.addEventListener("click", next);
+
+  typeText("Hello! Excuse me. I didn't mean to bother! I promise I won't take up much of your time.", () => {
+    setTimeout(() => next(), 1200);
+  });
+</script>
+
+</body>
+</html>
